@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: life
+spec:
+  selector:
+    matchLabels:
+      app: life
+  replicas: 1 
+  template:
+    metadata:
+      labels:
+        app: life
+    spec:
+      containers:
+      - name: life
+        image: registry.gitlab.com/mehdi-group/trap
+      imagePullSecrets:
+      - name: gitlab-credentials

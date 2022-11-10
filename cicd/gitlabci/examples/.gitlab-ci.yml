@@ -1,0 +1,37 @@
+test:
+  image: python:latest
+  stage: test
+  before_script:
+    - pip3 install -r tests/requirements.txt
+  script:
+    - cd tests && pytest
+
+
+build:
+  image: docker:latest
+  stage: build
+  services:
+    - docker:dind
+  script:
+    - docker login registry.gitlab.com --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
+    - docker build -t registry.gitlab.com/mehdi-group/trap -t registry.gitlab.com/mehdi-group/life .
+    - docker push registry.gitlab.com/mehdi-group/trap
+
+
+
+pages:
+  # The Docker image that will be used to build your app
+  image: python:latest
+  # Functions that should be executed before the build script is run
+  before_script:
+    - pip install mkdocs-material
+  script:
+    - mkdocs build --site-dir public
+  artifacts:
+    paths:
+      # The folder that contains the files to be exposed at the Page URL
+      - public
+  rules:
+    # This ensures that only pushes to the default branch will trigger
+    # a pages deploy
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH

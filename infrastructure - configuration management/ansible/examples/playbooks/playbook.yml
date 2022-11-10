@@ -1,0 +1,16 @@
+---
+#docker run -v %cd%:/work:ro -v ~/.ansible/roles:/root/.ansible/roles -v ~/.ssh:/root/.ssh:ro --rm spy86/ansible:latest ansible-playbook playbook.yml
+- hosts: localhost
+  tasks:
+    - name: site | hello world
+      shell: echo "Hi! Ansible is working"
+
+    - name: "install nginx"
+      apt:
+        name: [ 'nginx' ]
+        state: latest
+      notify: "restart web"
+  handlers:
+    - name: restart nginx
+      service: name="nginx" state="restarted"
+      listen: "restart web"
